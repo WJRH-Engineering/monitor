@@ -16,45 +16,45 @@ const timeout = function(duration) {
 	})
 }
 
-// const test = async function(){
-// 	await timeout(5)
-// 	console.log("timeout")
-// }
-
-// test()
-
 const systems = [ "DOOR" ] // the systems whose heartbeat we should be listening for
 const heartbeats = {}
+const status = {}
 
-// program.on(`heartbeat_DOOR`, ()=> console.log("reset door"))
-
-// program.emit('heartbeat_DOOR')
-
-const reset = function(system){
-	heartbeats[system] = Promise.race([
+const reset = async function(system){
+	const next = Promise.race([
 		program.next(`heartbeat_${system}`),
 		timeout(timeout_duration)
 	])
-	.then(event => {
-		if(event == "TIMEOUT"){
-			console.log(`SYSTEM OFFLINE: ${system}`)
-		}
-	})
+
+	const event = await next
+	
+	if(event == 'TIMEOUT') {
+		console.log(`SYSTEM OFFLINE: ${system}`)
+		status[system] = 'OFFLINE'
+	}
 }
 
 const begin = function(){
 	systems.forEach(function(system){
-		reset(system)
+		heartbeats[systems] = reset(system)
 	})
 }
 
-program.on('heartbeat', function({ system }){
+program.on('heartbeat', function(system){
+
+	// update the state of the system
+	if(!status[system] || status[system] == 'OFFLINE'){
+		status[system] = 'ONLINE'
+		console.log(`SYSTEM ONLINE: ${system}`)
+	}
+
 	program.emit(`heartbeat_${system}`)
-	reset(system)
+	heartbeats[system] = reset(system)
+
 })
 
 exports.kick = function(system){
-	program.emit(`heartbeat`, { system })
+	program.emit(`heartbeat`, system)
 }
 
 begin()

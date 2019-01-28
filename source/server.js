@@ -16,7 +16,6 @@ app.post('/groupme', function(req, res){
 })
 
 app.post('/log', function(req, res){
-	// console.log(req.body)
 
 	const { event, data, sender } = req.body
 	if(event == "HEARTBEAT") watchdog.kick(sender)
@@ -26,9 +25,11 @@ app.post('/log', function(req, res){
 
 app.listen(4002)
 
+
+
 // quick test
 // const fetch = require('node-fetch')
-// fetch('http://localhost:4002/groupme', {
+// fetch('http://localhost:4002/log', {
 //     headers: {
 //       'Accept': 'application/json',
 //       'Content-Type': 'application/json'

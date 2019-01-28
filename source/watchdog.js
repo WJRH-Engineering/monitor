@@ -1,3 +1,5 @@
+const groupme = require('./groupme.js')
+
 const timeout_duration = 5 // value in seconds
 
 const events = require('events')
@@ -29,7 +31,7 @@ const reset = async function(system){
 	const event = await next
 	
 	if(event == 'TIMEOUT') {
-		console.log(`SYSTEM OFFLINE: ${system}`)
+		groupme.post(`A major WJRH system has just gone offline: ${system} \n Please Investigate`)
 		status[system] = 'OFFLINE'
 	}
 }
@@ -45,7 +47,7 @@ program.on('heartbeat', function(system){
 	// update the state of the system
 	if(!status[system] || status[system] == 'OFFLINE'){
 		status[system] = 'ONLINE'
-		console.log(`SYSTEM ONLINE: ${system}`)
+		groupme.post(`SYSTEM ONLINE: ${system}`)
 	}
 
 	program.emit(`heartbeat_${system}`)

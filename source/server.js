@@ -2,29 +2,40 @@ const express = require('express')
 const app = express()
 const http = require("http").Server(app)
 
-const watchdog = require('./watchdog.js')
+const log = require('./log.js')
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 const events = require('events')
-exports.events = new events()
+interface = new events()
 
 app.post('/groupme', function(req, res){
-	console.log(req.body)
+	console.log(req.body.text)
+
+	if(req.body.text == "!status"){
+		console.log("success")
+		exports.interface.emit('GROUPME-COMMAND')
+	}
 })
 
 app.post('/log', function(req, res){
-
 	const { event, data, sender } = req.body
-	if(event == "HEARTBEAT") watchdog.kick(sender)
+
+	if(event) {
+		exports.interface.emit(event, {sender, ...data})
+	}
 
 	res.send("success")
 })
 
-app.listen(4002)
+exports.init = function(port){
+	app.listen(port)
+}
 
+exports.interface = interface
+exports.on = (event, handler) => exports.interface.on(event, handler)
 
 
 // quick test

@@ -4,6 +4,7 @@
   "description": "A simple program that monitors critical WJRH systems and generates bug reports",
   "main": "source/index.js",
   "scripts": {
+    "start": "node source/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,6 +19,7 @@
   "homepage": "https://github.com/WJRH-Engineering/monitor#readme",
   "dependencies": {
     "bunyan": "^1.8.12",
+    "bunyan-prettystream": "^0.1.3",
     "commander": "^2.19.0",
     "express": "^4.16.4",
     "node-fetch": "^2.3.0"
